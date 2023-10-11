@@ -3,6 +3,7 @@
 const baseX = require('base-x');
 const secp256k1 = require('secp256k1');
 const aesJs = require('aes-js');
+const myCrypto = require('node:crypto');
 
 const getBasex = lazyLoad(function() {
   return baseX;
@@ -21,7 +22,7 @@ const getAES = lazyLoad(function() {
 
 const hashBuffer = function(algo) {
   return function(value) {
-    return crypto
+    return myCrypto
       .createHash(algo)
       .update(value)
       .digest()
@@ -33,7 +34,7 @@ exports.hashBufferNative = function hashBufferNative() { return hashBuffer.apply
 exports.hashStringNative = function hashStringNative() { return hashBuffer.apply(this, arguments); };
 
 const generatePrivateKey = function(bytes) {
-  const privateKey = crypto.randomBytes(bytes)
+  const privateKey = myCrypto.randomBytes(bytes)
   if (getSecp256k1().privateKeyVerify(privateKey)) {
     return privateKey
   }
@@ -206,5 +207,5 @@ exports.nativeAESDecrypt = function(privateKey) {
 }
 
 exports.nativeGenerateRandomNumber = function() {
-  return crypto.randomBytes(8).readUInt32BE()
+  return myCrypto.randomBytes(8).readUInt32BE()
 }
